@@ -16,16 +16,17 @@ def test_client(test_client):
         
     yield test_client
 
-
-def test_list_empty_notepad_get(test_client):
+    
+def test_notepad_create(test_client):
     """
-    Tests access to the empty notepad list via GET request.
+    Tests the notepad can be created and saved to database correctly
     """
-    login_response = login(test_client, "user@example.com", "test1234")
-    assert login_response.status_code == 200, "Login was unsuccessful."
+    with test_client.application.app_context():
+        user = User.query.filter_by(email="user@example.com").first()
+        notepad = Notepad(title="TestNotepad", body="This is a test.", user_id=user.id)
+        db.session.add(notepad)
+        db.session.commit()
 
-    response = test_client.get("/notepad")
-    assert response.status_code == 200, "The notepad page could not be accessed."
-    assert b"You have no notepads." in response.data, "The expected content is not present on the page"
-
-    logout(test_client)
+        fetched = Notepad.query.filter_by(title="TestNotepad").first()
+        assert fetched is not None
+        assert fetched.body == "This is a test."
