@@ -4,6 +4,13 @@
 
 {% block content %}
 
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 class="h2 mb-0"><b>Notepads</b></h1>
+        <a href="{{ url_for('notepad.create_notepad') }}" class="btn btn-primary">
+            Create notepad
+        </a>
+    </div>
+
 {% if notepads %}
     <ul>
     {% for notepad in notepads %}
